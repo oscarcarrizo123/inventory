@@ -44,25 +44,25 @@ def export_totalized_inventory_to_excel():
         # Crear una vista consolidada de inventarios
         cursor.execute('''
         CREATE TEMP VIEW total_inventory AS
-        SELECT 'Albaro', * FROM albaro_inventory.inventory
+        SELECT 'albaro', * FROM albaro_inventory.inventory
         UNION ALL
-        SELECT 'Antonella', * FROM antonella_inventory.inventory
+        SELECT 'antonella', * FROM antonella_inventory.inventory
         UNION ALL
-        SELECT 'Selva', * FROM selva_inventory.inventory
+        SELECT 'selva', * FROM selva_inventory.inventory
         UNION ALL
-        SELECT 'Nahuel', * FROM nahuel_inventory.inventory
+        SELECT 'nahuel', * FROM nahuel_inventory.inventory
         UNION ALL
-        SELECT 'Sebastian', * FROM sebastian_inventory.inventory
+        SELECT 'sebastian', * FROM sebastian_inventory.inventory
         UNION ALL
-        SELECT 'Rodrigo', * FROM rodrigo_inventory.inventory
+        SELECT 'rodrigo', * FROM rodrigo_inventory.inventory
         UNION ALL
-        SELECT 'Nestor', * FROM nestor_inventory.inventory
+        SELECT 'nestor', * FROM nestor_inventory.inventory
         UNION ALL
-        SELECT 'Jose', * FROM jose_inventory.inventory
+        SELECT 'jose', * FROM jose_inventory.inventory
         UNION ALL
-        SELECT 'Raul', * FROM raul_inventory.inventory
+        SELECT 'raul', * FROM raul_inventory.inventory
         UNION ALL
-        SELECT 'Oscar', * FROM oscar_inventory.inventory
+        SELECT 'oscar', * FROM oscar_inventory.inventory
         ''')
         print("Vista consolidada creada correctamente.")
 
