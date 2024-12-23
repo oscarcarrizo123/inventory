@@ -8,7 +8,7 @@ app.secret_key = 'clave_secreta_segura'
 
 # Ruta base para las bases de datos
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_FOLDER = os.path.join(BASE_DIR, 'inventory/databases')
+DB_FOLDER = os.path.join(BASE_DIR, 'databases')
 os.makedirs(DB_FOLDER, exist_ok=True)
 
 # Crear la base de datos general para usuarios
