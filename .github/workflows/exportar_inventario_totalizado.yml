@@ -30,7 +30,7 @@ jobs:
 
       # 5. Subir el archivo Excel generado como artefacto
       - name: Upload Excel artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: inventario_totalizado
           path: databases/inventario_totalizado/*.xlsx
