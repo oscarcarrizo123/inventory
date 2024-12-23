@@ -12,16 +12,16 @@ os.makedirs(output_folder, exist_ok=True)
 
 # Lista de las bases de datos
 databases = [
-    'Albaro_inventory.db',
-    'Antonella_inventory.db',
-    'Selva_inventory.db',
-    'Nahuel_inventory.db',
-    'Sebastian_inventory.db',
-    'Rodrigo_inventory.db',
-    'Nestor_inventory.db',
-    'Jose_inventory.db',
-    'Raul_inventory.db',
-    'Oscar_inventory.db'
+    'albaro_inventory.db',
+    'antonella_inventory.db',
+    'selva_inventory.db',
+    'nahuel_inventory.db',
+    'sebastian_inventory.db',
+    'rodrigo_inventory.db',
+    'nestor_inventory.db',
+    'jose_inventory.db',
+    'raul_inventory.db',
+    'oscar_inventory.db'
 ]
 
 # Función para exportar datos totalizados a Excel
@@ -44,25 +44,25 @@ def export_totalized_inventory_to_excel():
         # Crear una vista consolidada de inventarios
         cursor.execute('''
         CREATE TEMP VIEW total_inventory AS
-        SELECT 'Albaro', * FROM Albaro_inventory.inventory
+        SELECT 'Albaro', * FROM albaro_inventory.inventory
         UNION ALL
-        SELECT 'Antonella', * FROM Antonella_inventory.inventory
+        SELECT 'Antonella', * FROM antonella_inventory.inventory
         UNION ALL
-        SELECT 'Selva', * FROM Selva_inventory.inventory
+        SELECT 'Selva', * FROM selva_inventory.inventory
         UNION ALL
-        SELECT 'Nahuel', * FROM Nahuel_inventory.inventory
+        SELECT 'Nahuel', * FROM nahuel_inventory.inventory
         UNION ALL
-        SELECT 'Sebastian', * FROM Sebastian_inventory.inventory
+        SELECT 'Sebastian', * FROM sebastian_inventory.inventory
         UNION ALL
-        SELECT 'Rodrigo', * FROM Rodrigo_inventory.inventory
+        SELECT 'Rodrigo', * FROM rodrigo_inventory.inventory
         UNION ALL
-        SELECT 'Nestor', * FROM Nestor_inventory.inventory
+        SELECT 'Nestor', * FROM nestor_inventory.inventory
         UNION ALL
-        SELECT 'Jose', * FROM Jose_inventory.inventory
+        SELECT 'Jose', * FROM jose_inventory.inventory
         UNION ALL
-        SELECT 'Raul', * FROM Raul_inventory.inventory
+        SELECT 'Raul', * FROM raul_inventory.inventory
         UNION ALL
-        SELECT 'Oscar', * FROM Oscar_inventory.inventory
+        SELECT 'Oscar', * FROM oscar_inventory.inventory
         ''')
         print("Vista consolidada creada correctamente.")
 
