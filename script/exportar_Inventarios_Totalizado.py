@@ -95,3 +95,6 @@ def export_totalized_inventory_to_excel():
 
 # Ejecutar exportación totalizada
 export_totalized_inventory_to_excel()
+
+print(f"Archivo Excel generado en: {os.path.join(output_folder, f'inventario_totalizado_{datetime.now().strftime('%d%m%Y_%H%M%S')}.xlsx')}")
+
