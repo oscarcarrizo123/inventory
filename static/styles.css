@@ -1,0 +1,157 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+}
+
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 5px; /* Reduce el espacio entre campos */
+}
+
+label {
+    font-weight: bold;
+    text-align: left;
+    margin-bottom: -3px; /* Reduce el espacio entre el label y el input */
+}
+
+input {
+    padding: 5px; /* Ajusta el espacio interno del campo */
+    margin-bottom: 2px; /* Reduce el espacio inferior del input */
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+button[type="submit"] {
+    margin-top: 15px; /* Reduce el espacio entre el último campo y el botón */
+    padding: 10px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+.table-container {
+    margin-top: 10px;
+    overflow-x: auto;
+}
+
+table {
+    table-layout: auto; /* Permite que las celdas ajusten su ancho automáticamente */
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 5px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+th {
+    background-color: #007bff;
+    color: #fff;
+}
+
+
+td.actions {
+    text-align: center;
+    white-space: nowrap; /* Evita que los botones se dividan en varias líneas */
+    display: flex; /* Configura el contenedor como flexbox */
+    justify-content: center; /* Centra los botones horizontalmente */
+    gap: 10px; /* Espacio entre botones */
+    align-items: center; /* Asegura la alineación vertical de los botones */
+}
+
+td.actions button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+td.actions button.edit {
+    border-color: #007bff;
+}
+
+td.actions button.delete {
+    border-color: #dc3545;
+}
+
+td.actions button.edit svg path {
+    fill: #007bff;
+}
+
+td.actions button.delete svg path {
+    fill: #dc3545;
+}
+
+
+
+td.actions button:hover {
+    opacity: 0.8;
+}
+
+.logout-container {
+    position: absolute;
+    top: 25px; /* Ajusta la posición superior según tu diseño */
+    right: 10px; /* Ajusta la posición derecha según tu diseño */
+    z-index: 1000; /* Asegura que el botón esté sobre otros elementos */
+}
+
+.logout-button {
+    text-decoration: none;
+    color: white;
+    background-color: #dc3545;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 14px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.logout-button:hover {
+    background-color: #c82333;
+    opacity: 0.9;
+}
+
+.logo-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px; /* Espacio entre el logo y el resto del contenido */
+}
+
+.logo {
+    max-width: 150px; /* Ajusta este valor según el tamaño deseado */
+    max-height: 150px; /* Limita la altura máxima */
+    object-fit: contain; /* Asegura que mantenga las proporciones */
+}

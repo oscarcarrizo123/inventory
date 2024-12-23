@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Inventario</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="logout-container">
+        <a href="{{ url_for('logout') }}" class="logout-button">Cerrar Sesión</a>
+    </div>
+    <div class="container">
+        <h1>Control de Inventario</h1>
+
+        <form id="inventoryForm">
+            <label for="sector">Sector:</label>
+            <input type="text" id="sector" name="sector" required>
+
+            <label for="barcode">Código de Barras:</label>
+            <input type="number" id="barcode" name="barcode" required>
+
+            <label for="description">Descripción:</label>
+            <input type="text" id="description" name="description" readonly>
+
+            <label for="presentation">Presentación:</label>
+            <input type="text" id="presentation" name="presentation" readonly>
+
+            <label for="type">Tipo:</label>
+            <input type="text" id="type" name="type" readonly>
+
+            <label for="quantity">Cantidad:</label>
+            <input type="number" id="quantity" name="quantity" required>
+
+            <button type="submit">Agregar al Inventario</button>
+        </form>
+
+        <div class="table-container">
+            <table id="inventoryTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Sector</th>
+                        <th>Código de Barras</th>
+                        <th>Descripción</th>
+                        <th>Presentación</th>
+                        <th>Tipo</th>
+                        <th>Cantidad</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Aquí se insertan las filas de inventario dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Autocompletar campos cuando se ingresa un código de barras
+        document.getElementById('barcode').addEventListener('change', async function () {
+            const barcode = this.value;
+
+            if (barcode) {
+                try {
+                    const response = await fetch(`/get_product/${barcode}`);
+                    if (!response.ok) throw new Error('Producto no encontrado.');
+
+                    const product = await response.json();
+
+                    document.getElementById('description').value = product.description;
+                    document.getElementById('presentation').value = product.presentation;
+                    document.getElementById('type').value = product.type;
+                } catch (error) {
+                    alert(error.message);
+                    document.getElementById('description').value = '';
+                    document.getElementById('presentation').value = '';
+                    document.getElementById('type').value = '';
+                    document.getElementById('barcode').focus(); // Posiciona el cursor en el campo de código de barras
+                }
+            }
+        });
+
+        async function fetchInventory() {
+            try {
+                const response = await fetch('/get_inventory');
+                if (!response.ok) throw new Error('Error al cargar el inventario.');
+
+                const inventory = await response.json();
+                const tableBody = document.querySelector('#inventoryTable tbody');
+                tableBody.innerHTML = '';
+
+                inventory.forEach(item => {
+                    const row = createTableRow(item);
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        function createTableRow(item) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${item.id}</td>
+                <td>${item.sector}</td>
+                <td>${item.barcode}</td>
+                <td>${item.description}</td>
+                <td>${item.presentation}</td>
+                <td>${item.type}</td>
+                <td>${item.quantity}</td>
+                <td class="actions">
+                    <button class="edit" onclick="editQuantity(${item.id}, ${item.quantity})">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
+                            <path fill="#007bff" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                        </svg>
+                    </button>
+                    <button class="delete" onclick="deleteItem(${item.id})">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
+                            <path fill="#dc3545" d="M16 9v10H8V9h8m-1.5-6h-5L9 4H5v2h14V4h-4l-1.5-1z"/>
+                        </svg>
+                    </button>
+                </td>
+            `;
+            return row;
+        }
+
+        async function deleteItem(id) {
+            if (confirm('¿Estás seguro de que deseas eliminar este ítem?')) {
+                try {
+                    const response = await fetch(`/delete_item/${id}`, { method: 'DELETE' });
+                    if (!response.ok) throw new Error('Error al eliminar el ítem.');
+                    fetchInventory();
+                } catch (error) {
+                    alert(error.message);
+                }
+            }
+        }
+
+        async function editQuantity(id, currentQuantity) {
+            const newQuantity = prompt('Ingrese la nueva cantidad:', currentQuantity);
+            if (newQuantity === null || newQuantity === '' || isNaN(newQuantity)) {
+                alert('Cantidad inválida. Inténtelo nuevamente.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/edit_item/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ quantity: parseInt(newQuantity) })
+                });
+
+                if (!response.ok) throw new Error('Error al actualizar la cantidad.');
+                fetchInventory();
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+       document.querySelector('#inventoryForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
+
+    const formData = new FormData(event.target);
+    const formObject = Object.fromEntries(formData.entries());
+
+    try {
+        const response = await fetch('/add_item', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formObject)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Error al agregar el ítem al inventario.');
+        }
+
+        const result = await response.json();
+
+        // Verifica que la respuesta contenga un ítem con ID
+        if (!result.item || !result.item.id) {
+            throw new Error('El servidor no devolvió el ítem agregado correctamente.');
+        }
+
+        // Agrega el nuevo ítem a la tabla
+        const tableBody = document.querySelector('#inventoryTable tbody');
+        const newRow = createTableRow(result.item);
+        tableBody.prepend(newRow); // Agrega el nuevo elemento al inicio de la tabla
+
+        // Limpia los campos del formulario, excepto el campo sector
+        const sectorValue = document.getElementById('sector').value;
+        document.querySelector('#inventoryForm').reset();
+        document.getElementById('sector').value = sectorValue;
+
+        // Posiciona el cursor en el campo código de barras
+        document.getElementById('barcode').focus();
+    } catch (error) {
+        alert(error.message);
+    }
+});
+
+        document.addEventListener('DOMContentLoaded', fetchInventory);
+    </script>
+</body>
+</html>

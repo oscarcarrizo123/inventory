@@ -1,0 +1,5 @@
+correr base de datos:
+D:\Inventory>python app.py
+
+Correr Flask para visualizar en celular
+D:\Inventory>flask run --host=0.0.0.0
