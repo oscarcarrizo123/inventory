@@ -127,7 +127,7 @@ def get_inventory():
     if 'db_path' not in session:
         return redirect(url_for('login'))
 
-    db_path = session['db_path']
+    db_path = session['db_path'] = os.path.join(DB_FOLDER, f"{username}_inventory.db")
     try:
         if not os.path.exists(db_path):
             raise FileNotFoundError(f"La base de datos no existe en la ruta: {db_path}")
