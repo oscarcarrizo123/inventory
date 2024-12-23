@@ -26,4 +26,4 @@ jobs:
       # 4. Ejecutar el script
       - name: Run exportar_Inventarios_Totalizado.py
         run: |
-          python scripts/exportar_Inventarios_Totalizado.py
+          python script/exportar_Inventarios_Totalizado.py
