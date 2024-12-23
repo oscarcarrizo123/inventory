@@ -27,3 +27,11 @@ jobs:
       - name: Run exportar_Inventarios_Totalizado.py
         run: |
           python script/exportar_Inventarios_Totalizado.py
+
+      # Subir el archivo Excel generado como artefacto
+      - name: Upload Excel artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: inventario_totalizado
+          path: databases/inventario_totalizado/*.xlsx
+
