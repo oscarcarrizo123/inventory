@@ -11,6 +11,9 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_FOLDER = os.path.join(BASE_DIR, 'databases')
 os.makedirs(DB_FOLDER, exist_ok=True)
 
+# Ruta para la base de datos de productos
+products_db_path = os.path.join(BASE_DIR, 'products.db')
+
 # Crear la base de datos general para usuarios
 global_db_path = os.path.join(BASE_DIR, 'users.db')
 with sqlite3.connect(global_db_path) as conn:
