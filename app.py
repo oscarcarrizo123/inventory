@@ -7,11 +7,12 @@ app = Flask(__name__)
 app.secret_key = 'clave_secreta_segura'
 
 # Ruta base para las bases de datos
-DB_FOLDER = 'databases'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_FOLDER = os.path.join(BASE_DIR, 'databases')
 os.makedirs(DB_FOLDER, exist_ok=True)
 
 # Crear la base de datos general para usuarios
-global_db_path = 'users.db'
+global_db_path = os.path.join(BASE_DIR, 'users.db')
 with sqlite3.connect(global_db_path) as conn:
     cursor = conn.cursor()
     cursor.execute('''CREATE TABLE IF NOT EXISTS users (
@@ -39,7 +40,6 @@ def create_user_database(username):
         conn.commit()
     return db_path
 
-#Ruta para acceder al administrador de usuarios ----
 @app.route('/admin')
 def admin():
     if 'username' not in session or session.get('username') != 'admin':
@@ -55,7 +55,6 @@ def admin():
     except Exception as e:
         return str(e), 500
 
-#Ruta para eliminar usuarios ----
 @app.route('/admin/delete_user/<int:user_id>', methods=['POST'])
 def delete_user(user_id):
     if 'username' not in session or session.get('username') != 'admin':
@@ -71,8 +70,6 @@ def delete_user(user_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-    
-
 @app.route('/')
 def home():
     if 'username' not in session:
@@ -81,7 +78,6 @@ def home():
 
 @app.route('/admin/add_user', methods=['GET', 'POST'])
 def add_user():
-    # Verifica que el usuario administrador esté logueado
     if 'username' not in session or session['username'] != 'admin':
         return redirect(url_for('login'))
 
@@ -103,12 +99,11 @@ def add_user():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form['username'].strip().lower()  # Convertir a minúsculas
+        username = request.form['username'].strip().lower()
         password = request.form['password']
 
         with sqlite3.connect(global_db_path) as conn:
             cursor = conn.cursor()
-            # Comparar el username como insensible a mayúsculas/minúsculas
             cursor.execute('SELECT id, password FROM users WHERE LOWER(username) = ?', (username,))
             user = cursor.fetchone()
 
@@ -119,9 +114,8 @@ def login():
                 return redirect(url_for('home'))
             else:
                 error = "Usuario o contraseña incorrectos."
-                return render_template('login.html', error=error)  # Enviar el mensaje de error al template
+                return render_template('login.html', error=error)
     return render_template('login.html')
-
 
 @app.route('/logout')
 def logout():
@@ -135,6 +129,9 @@ def get_inventory():
 
     db_path = session['db_path']
     try:
+        if not os.path.exists(db_path):
+            raise FileNotFoundError(f"La base de datos no existe en la ruta: {db_path}")
+
         with sqlite3.connect(db_path) as conn:
             cursor = conn.cursor()
             cursor.execute('SELECT * FROM inventory ORDER BY id DESC')
@@ -151,16 +148,19 @@ def get_inventory():
                 } for row in rows
             ]
         return jsonify(inventory)
+    except FileNotFoundError as fnf_error:
+        return jsonify({"error": str(fnf_error)}), 404
     except Exception as e:
         return jsonify({"error": f"No se pudo cargar el inventario: {str(e)}"}), 500
 
-# Ruta de la base de datos global de productos
-products_db_path = 'products.db'
+products_db_path = os.path.join(BASE_DIR, 'products.db')
 
 @app.route('/get_product/<barcode>', methods=['GET'])
 def get_product(barcode):
     try:
-        # Conectar a la base de datos global de productos
+        if not os.path.exists(products_db_path):
+            raise FileNotFoundError("La base de datos de productos no existe.")
+
         with sqlite3.connect(products_db_path) as conn:
             cursor = conn.cursor()
             cursor.execute('SELECT description, presentation, type FROM products WHERE barcode = ?', (barcode,))
@@ -173,9 +173,10 @@ def get_product(barcode):
                 })
             else:
                 return jsonify({"error": "Producto no encontrado."}), 404
+    except FileNotFoundError as fnf_error:
+        return jsonify({"error": str(fnf_error)}), 404
     except Exception as e:
         return jsonify({"error": f"Error al buscar el producto: {str(e)}"}), 500
-
 
 @app.route('/add_item', methods=['POST'])
 def add_item():
@@ -186,7 +187,6 @@ def add_item():
     data = request.get_json()
 
     try:
-        # Insertar el nuevo ítem en la base de datos del usuario
         with sqlite3.connect(db_path) as conn:
             cursor = conn.cursor()
             cursor.execute('''
@@ -201,9 +201,8 @@ def add_item():
                 data['quantity']
             ))
             conn.commit()
-            new_item_id = cursor.lastrowid  # Obtiene el ID del nuevo registro
+            new_item_id = cursor.lastrowid
 
-        # Devolver el nuevo ítem como respuesta
         return jsonify({
             "message": "Item agregado correctamente.",
             "item": {
@@ -252,8 +251,6 @@ def delete_item(item_id):
         conn.commit()
 
     return jsonify({"message": "Item eliminado correctamente."})
-
-import os
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))  # Usar el puerto de Render o 5000 como predeterminado
