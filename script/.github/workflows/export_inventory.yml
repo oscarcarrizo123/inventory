@@ -1,0 +1,28 @@
+name: Exportar inventario totalizado
+
+on:
+  workflow_dispatch: # Permite ejecutar el script manualmente desde la interfaz de GitHub
+
+jobs:
+  export-inventory:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Chequear el repositorio
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. Configurar Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      # 3. Instalar dependencias
+      - name: Install dependencies
+        run: |
+          pip install openpyxl
+
+      # 4. Ejecutar el script
+      - name: Run export_inventory.py
+        run: python scripts/export_inventory.py
