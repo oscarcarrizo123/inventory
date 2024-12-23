@@ -125,12 +125,14 @@ def logout():
 @app.route('/get_inventory', methods=['GET'])
 def get_inventory():
     if 'db_path' not in session:
+        print("Error: Usuario no autenticado o db_path no configurado.")
         return jsonify({"error": "Usuario no autenticado o base de datos no configurada."}), 401
 
     db_path = session['db_path']
-    print(f"Intentando cargar inventario desde: {db_path}")  # Log para depuración
+    print(f"Intentando cargar inventario desde: {db_path}")
 
     if not os.path.exists(db_path):
+        print(f"Error: La base de datos no existe en la ruta {db_path}")
         return jsonify({"error": f"La base de datos no existe: {db_path}"}), 404
 
     try:
@@ -149,11 +151,14 @@ def get_inventory():
                     "quantity": row[6]
                 } for row in rows
             ]
+        print("Inventario cargado correctamente.")
         return jsonify(inventory)
+    except sqlite3.OperationalError as db_error:
+        print(f"Error al acceder a la base de datos: {db_error}")
+        return jsonify({"error": f"Error al acceder a la base de datos: {db_error}"}), 500
     except Exception as e:
-        print(f"Error al cargar inventario: {e}")  # Log para errores inesperados
-        return jsonify({"error": f"Error inesperado: {str(e)}"}), 500
-
+        print(f"Error inesperado: {e}")
+        return jsonify({"error": f"Error inesperado: {e}"}), 500
 
 
 @app.route('/get_product/<barcode>', methods=['GET'])
