@@ -4,8 +4,8 @@ from openpyxl import Workbook
 from datetime import datetime
 
 # Ruta donde están almacenadas las bases de datos
-db_folder = r'D:\Inventory\databases'
-output_folder = r'D:/Inventory/databases/inventario_totalizado/'
+db_folder = os.path.join(os.getcwd(), 'databases')
+output_folder = os.path.join(db_folder, 'databases/inventario_totalizado/')
 
 # Crear la carpeta de salida si no existe
 os.makedirs(output_folder, exist_ok=True)
